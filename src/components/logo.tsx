@@ -55,7 +55,7 @@ export function Logo({ className }: { className?: string }) {
       {/* Wordmark */}
       <div className="flex flex-col leading-none">
         <span
-          className="text-lg font-extrabold tracking-tighter text-sidebar-foreground"
+          className="text-lg font-extrabold tracking-tighter text-brand-cyan"
           style={{ fontFamily: "'Outfit', sans-serif" }}
         >
           Lin

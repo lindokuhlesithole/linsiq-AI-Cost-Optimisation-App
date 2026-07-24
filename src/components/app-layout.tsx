@@ -61,7 +61,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       toast.error("Failed to sign out");
       return;
     }
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/sign-in", replace: true });
   }
 
   const initials = (profile?.displayName ?? profile?.email ?? "?")

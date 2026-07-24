@@ -9,16 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
+import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedOptimizationsRouteImport } from './routes/_authenticated/optimizations'
 import { Route as AuthenticatedAuditRouteImport } from './routes/_authenticated/audit'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const SignInRoute = SignInRouteImport.update({
+  id: '/sign-in',
+  path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -49,13 +49,13 @@ const AuthenticatedAuditRoute = AuthenticatedAuditRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
-  '/auth': typeof AuthRoute
+  '/sign-in': typeof SignInRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/optimizations': typeof AuthenticatedOptimizationsRoute
   '/settings': typeof AuthenticatedSettingsRoute
 }
 export interface FileRoutesByTo {
-  '/auth': typeof AuthRoute
+  '/sign-in': typeof SignInRoute
   '/audit': typeof AuthenticatedAuditRoute
   '/optimizations': typeof AuthenticatedOptimizationsRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -64,7 +64,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/auth': typeof AuthRoute
+  '/sign-in': typeof SignInRoute
   '/_authenticated/audit': typeof AuthenticatedAuditRoute
   '/_authenticated/optimizations': typeof AuthenticatedOptimizationsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -72,13 +72,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/audit' | '/optimizations' | '/settings'
+  fullPaths: '/' | '/sign-in' | '/audit' | '/optimizations' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/audit' | '/optimizations' | '/settings' | '/'
+  to: '/sign-in' | '/audit' | '/optimizations' | '/settings' | '/'
   id:
     | '__root__'
     | '/_authenticated'
-    | '/auth'
+    | '/sign-in'
     | '/_authenticated/audit'
     | '/_authenticated/optimizations'
     | '/_authenticated/settings'
@@ -87,16 +87,16 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
+  SignInRoute: typeof SignInRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/sign-in': {
+      id: '/sign-in'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -156,7 +156,7 @@ const AuthenticatedRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
+  SignInRoute: SignInRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
