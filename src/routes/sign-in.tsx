@@ -12,10 +12,10 @@ import { Loader2 } from "lucide-react";
 export const Route = createFileRoute("/sign-in")({
   head: () => ({
     meta: [
-      { title: "Sign in · Throttle" },
-      { name: "description", content: "Sign in to Throttle to manage your AI cost optimizations." },
-      { property: "og:title", content: "Sign in · Throttle" },
-      { property: "og:description", content: "Sign in to Throttle to manage your AI cost optimizations." },
+      { title: "Sign in · Linsiq" },
+      { name: "description", content: "Sign in to Linsiq to manage your AI cost optimizations." },
+      { property: "og:title", content: "Sign in · Linsiq" },
+      { property: "og:description", content: "Sign in to Linsiq to manage your AI cost optimizations." },
     ],
   }),
   component: AuthPage,
