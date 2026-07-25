@@ -1,29 +1,59 @@
-# Welcome to your Lovable project
+# Throttle
 
-This project was built with [Lovable](https://lovable.dev).
+> **Stop bleeding money on AI infrastructure.**
 
-## Build with Lovable
+Throttle is an AI cost optimization platform that automatically detects waste in AWS AI services (SageMaker, Bedrock, EC2 GPU) and applies safe optimizations with one click.
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+## Features
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Cost Dashboard** — Real-time breakdown of AI spend by service, region, team, model
+- **Waste Detection** — Identifies idle endpoints, over-provisioned instances, Spot-eligible jobs
+- **One-Click Apply** — Safe remediation: stop, resize, convert to Spot, set budgets
+- **Audit Trail** — Every action logged for compliance (NIS2, AI Act)
+- **Budget Guardrails** — Alerts and hard stops before overspend
+- **Savings Report** — Monthly verified savings, ROI calculation
 
-## Development
+## Tech Stack
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+- **Frontend**: React 18 + TypeScript + Tailwind CSS + Recharts
+- **Backend**: Python + FastAPI
+- **Database**: PostgreSQL 15 + Supabase
+- **Cache & Queue**: Redis + Celery
+- **AWS SDK**: boto3 (Cost Explorer, SageMaker, CloudWatch, EC2)
+- **Auth**: AWS IAM role assumption (cross-account, no credentials stored)
+- **Deployment**: Docker + AWS ECS Fargate
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+## Getting Started
+
+```bash
+git clone https://github.com/lindokuhlesithole/linsiq-AI-Cost-Optimisation-App.git
+cd linsiq-AI-Cost-Optimisation-App
+npm install
 npm run dev
 ```
 
-## Built with
+## Environment Variables
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+Copy `.env.example` to `.env` and configure:
+- `SUPABASE_URL` — Your Supabase project URL
+- `SUPABASE_ANON_KEY` — Supabase anonymous key
+- `DATABASE_URL` — PostgreSQL connection string
+
+## Architecture
+
+```
+Frontend (React + Tailwind + Recharts)
+    |
+    v
+FastAPI Backend
+    |
+    +---> AWS Cost Explorer (cost data)
+    +---> SageMaker API (endpoint metrics)
+    +---> CloudWatch (utilization)
+    +---> PostgreSQL (cost snapshots, optimizations, audit)
+    +---> Redis (cache, job queues)
+```
+
+## License
+
+MIT — Built by Lindokuhle Sithole.
