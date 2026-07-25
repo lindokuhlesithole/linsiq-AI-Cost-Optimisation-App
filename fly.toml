@@ -1,0 +1,59 @@
+# ============================================================
+# Linsiq — Fly.io Deployment (FREE TIER)
+# 
+# FREE TIER:
+#   - 3 shared-cpu-1 VMs (256MB RAM each) — ALWAYS ON
+#   - 3GB PostgreSQL storage — FREE FOREVER
+#   - 160GB outbound bandwidth/month
+#   - Perfect for a real always-on API + DB
+#
+# DEPLOY: fly deploy
+# ============================================================
+
+app = 'linsiq-api'
+primary_region = 'jnb'  # Johannesburg — closest to South Africa
+
+[build]
+  dockerfile = 'backend/Dockerfile.prod'
+
+[env]
+  PORT = '8000'
+  AWS_DEFAULT_REGION = 'us-east-1'
+  CORS_ORIGINS = '*'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false    # Keep running (free tier allows 3 always-on)
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
+
+# --- Processes ---
+[processes]
+  app = 'uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2'
+  worker = 'celery -A core.celery worker --loglevel=info --concurrency=1'
+
+# --- Internal service for worker ---
+[[services]]
+  processes = ['worker']
+  internal_port = 8001
+  auto_stop_machines = false
+  auto_start_machines = false
+  min_machines_running = 1
+
+[[mounts]]
+  source = 'linsiq_data'
+  destination = '/data'
