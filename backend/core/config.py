@@ -3,8 +3,6 @@ Linsiq Application Settings
 Loads from environment variables with sensible defaults for free-tier deployment.
 """
 from pydantic_settings import BaseSettings
-from typing import List
-import os
 
 
 class Settings(BaseSettings):
@@ -17,7 +15,7 @@ class Settings(BaseSettings):
     # Database (defaults to SQLite for zero-config deployment)
     DATABASE_URL: str = "sqlite:///./linsiq.db"
 
-    # Redis (uses fakeredis as fallback if not configured)
+    # Redis (uses memory fallback if not configured)
     REDIS_URL: str = "memory://"
     CELERY_BROKER_URL: str = "memory://"
     CELERY_RESULT_BACKEND: str = "memory://"
@@ -32,19 +30,12 @@ class Settings(BaseSettings):
     SUPABASE_ANON_KEY: str = ""
     SUPABASE_SERVICE_ROLE_KEY: str = ""
 
-    # CORS
-    CORS_ORIGINS: List[str] = ["*"]
+    # CORS (comma-separated list, or "*" for all)
+    CORS_ORIGINS: str = "*"
 
     class Config:
         env_file = ".env"
         case_sensitive = False
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # Parse CORS_ORIGINS from comma-separated string
-        cors = os.getenv("CORS_ORIGINS", "*")
-        if isinstance(cors, str):
-            self.CORS_ORIGINS = [c.strip() for c in cors.split(",")]
 
 
 settings = Settings()
