@@ -2,12 +2,10 @@
 Linsiq Backend API
 FastAPI application for AI cost optimization.
 """
-from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from contextlib import asynccontextmanager
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from api.costs import router as costs_router
 from api.waste import router as waste_router
@@ -21,30 +19,30 @@ from core.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup
     Base.metadata.create_all(bind=engine)
     yield
-    # Shutdown
     engine.dispose()
 
 
 app = FastAPI(
     title="Linsiq API",
-    description="AI Cost Optimization Platform — Stop bleeding money on AI infrastructure.",
+    description="AI Cost Optimization Platform",
     version="1.0.0",
     lifespan=lifespan,
 )
 
-# CORS
+# Parse CORS origins: comma-separated string to list
+cors_origins = [o.strip() for o in settings.CORS_ORIGINS.split(",")] if settings.CORS_ORIGINS != "*" else ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Include routers
+# Routers
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(costs_router, prefix="/api/v1/costs", tags=["Costs"])
 app.include_router(waste_router, prefix="/api/v1/waste", tags=["Waste Detection"])
@@ -70,8 +68,3 @@ async def root():
         "docs": "/docs",
         "health": "/health",
     }
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
