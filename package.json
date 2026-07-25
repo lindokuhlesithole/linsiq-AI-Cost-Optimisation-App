@@ -1,5 +1,5 @@
 {
-  "name": "throttle-ai-cost-optimization",
+  "name": "linsiq-ai-cost-optimization",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -87,7 +87,7 @@
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16"
   },
-  "description": "Throttle \u2014 AI Cost Optimization Platform. Stop bleeding money on AI infrastructure.",
+  "description": "Linsiq \u2014 AI Cost Optimization Platform. Stop bleeding money on AI infrastructure.",
   "author": "Lindokuhle Sithole <sitholelindokuhle371@gmail.com>",
   "license": "MIT",
   "repository": {
