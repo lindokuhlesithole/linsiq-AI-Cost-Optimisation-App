@@ -41,7 +41,7 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
         ...(!SUPABASE_URL ? ['SUPABASE_URL'] : []),
         ...(!SUPABASE_PUBLISHABLE_KEY ? ['SUPABASE_PUBLISHABLE_KEY'] : []),
       ];
-      const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Throttle Cloud.`;
+      const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Connect Supabase in Linsiq Cloud.`;
       console.error(`[Supabase] ${message}`);
       throw new Error(message);
     }
