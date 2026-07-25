@@ -67,9 +67,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Linsiq — AI Cost Optimization" },
+      { title: "Throttle — AI Cost Optimization" },
       { name: "description", content: "Cut your AI infrastructure spend with automated optimization across SageMaker, Bedrock, and EC2 GPU workloads." },
-      { property: "og:title", content: "Linsiq — AI Cost Optimization" },
+      { property: "og:title", content: "Throttle — AI Cost Optimization" },
       { property: "og:description", content: "Cut your AI infrastructure spend with automated optimization across SageMaker, Bedrock, and EC2 GPU workloads." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
