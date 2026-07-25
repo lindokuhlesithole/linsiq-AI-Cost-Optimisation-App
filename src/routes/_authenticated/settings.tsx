@@ -12,9 +12,9 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings · Throttle" },
-      { name: "description", content: "Connect your AWS account and configure notification preferences for Throttle." },
-      { property: "og:title", content: "Settings · Throttle" },
+      { title: "Settings · Linsiq" },
+      { name: "description", content: "Connect your AWS account and configure notification preferences for Linsiq." },
+      { property: "og:title", content: "Settings · Linsiq" },
       { property: "og:description", content: "Connect AWS and configure notifications." },
     ],
   }),
@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 
 function SettingsPage() {
   const [roleArn, setRoleArn] = useState("");
-  const [externalId] = useState("throttle-4820-af31-e920");
+  const [externalId] = useState("linsiq-4820-af31-e920");
   const [connected, setConnected] = useState(false);
 
   const [notifWeekly, setNotifWeekly] = useState(true);
@@ -47,7 +47,7 @@ function SettingsPage() {
     <AppLayout>
       <PageHeader
         title="Settings"
-        description="Manage your AWS connection and how Throttle reaches out."
+        description="Manage your AWS connection and how Linsiq reaches out."
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -92,7 +92,7 @@ function SettingsPage() {
               <Label htmlFor="roleArn">Role ARN</Label>
               <Input
                 id="roleArn"
-                placeholder="arn:aws:iam::123456789012:role/ThrottleReadOnly"
+                placeholder="arn:aws:iam::123456789012:role/LinsiqReadOnly"
                 value={roleArn}
                 onChange={(e) => setRoleArn(e.target.value)}
                 className="font-mono text-sm"
@@ -115,7 +115,7 @@ function SettingsPage() {
         <Card className="p-6 gap-4">
           <div>
             <h2 className="text-base font-semibold text-foreground">Notifications</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Choose what Throttle alerts you about.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Choose what Linsiq alerts you about.</p>
           </div>
 
           <div className="space-y-4">
