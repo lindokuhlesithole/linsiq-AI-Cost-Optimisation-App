@@ -1,6 +1,7 @@
 # ============================================================
 # Linsiq API — Production Dockerfile
 # Multi-stage build for optimized production image
+# Build context: repo root (so use backend/ prefix)
 # ============================================================
 
 # --- Stage 1: Builder ---
@@ -18,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-COPY requirements.txt .
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
@@ -40,17 +41,13 @@ COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
-COPY --chown=linsiq:linsiq . .
+COPY --chown=linsiq:linsiq backend/ .
 
 # Switch to non-root user
 USER linsiq
 
 # Expose port
-EXPOSE 8000
+ENV PYTHONUNBUFFERED=1
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
-
-# Run with uvicorn (production: use gunicorn + uvicorn workers)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]
+# Use $PORT env var (Render sets this), fallback to 8000 for local
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000} --workers 2
