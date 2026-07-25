@@ -14,7 +14,7 @@ export function Logo({ className }: { className?: string }) {
           {/* Speedometer / Gauge icon */}
           <svg viewBox="0 0 24 24" className="h-5 w-5 relative z-10" fill="none" stroke="currentColor">
             <defs>
-              <linearGradient id="throttle-logo-grad" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+              <linearGradient id="linsiq-logo-grad" x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse">
                 <stop stopColor="hsl(var(--brand-cyan))" />
                 <stop offset="1" stopColor="hsl(var(--brand-blue))" />
               </linearGradient>
@@ -22,7 +22,7 @@ export function Logo({ className }: { className?: string }) {
             {/* Gauge arc */}
             <path
               d="M4 16C4 10.477 8.477 6 14 6C16.5 6 18.8 7 20.5 8.7"
-              stroke="url(#throttle-logo-grad)"
+              stroke="url(#linsiq-logo-grad)"
               strokeWidth="2.5"
               strokeLinecap="round"
               fill="none"
@@ -53,7 +53,7 @@ export function Logo({ className }: { className?: string }) {
           className="text-lg font-extrabold tracking-tighter text-emerald-400"
           style={{ fontFamily: "'Outfit', sans-serif" }}
         >
-          Thro<span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">ttle</span>
+          Lins<span className="bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">iq</span>
         </span>
         {/* Animated underline */}
         <div className="relative h-0.5 w-full mt-0.5 rounded-full bg-sidebar-border overflow-hidden">
