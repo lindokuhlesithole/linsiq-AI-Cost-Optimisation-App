@@ -1,5 +1,5 @@
 {
-  "name": "tanstack_start_ts",
+  "name": "throttle-ai-cost-optimization",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@radix-ui/react-accordion": "^1.2.12",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-aspect-ratio": "^1.1.8",
@@ -88,5 +87,12 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
     "vite": "^8.0.16"
+  },
+  "description": "Throttle \u2014 AI Cost Optimization Platform. Stop bleeding money on AI infrastructure.",
+  "author": "Lindokuhle Sithole <sitholelindokuhle371@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lindokuhlesithole/linsiq-AI-Cost-Optimisation-App.git"
   }
 }
