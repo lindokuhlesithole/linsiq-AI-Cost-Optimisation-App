@@ -1,0 +1,57 @@
+# ============================================================
+# Linsiq — Fly.io Production Config (1000 Concurrent Users)
+# 
+# Architecture: 3 VMs × 256MB RAM + PostgreSQL + Redis
+# Each VM handles ~350 users = 1000 total concurrent capacity
+#
+# DEPLOY: fly deploy --config fly.production.toml
+# ============================================================
+
+app = 'linsiq'
+primary_region = 'jnb'  # Johannesburg — lowest latency for SA
+
+[build]
+  dockerfile = 'backend/Dockerfile.prod'
+
+[env]
+  PORT = '8000'
+  AWS_DEFAULT_REGION = 'us-east-1'
+  # CORS: allow your Surge.sh frontend
+  CORS_ORIGINS = 'https://linsiq.surge.sh,https://linsiq-api.onrender.com,http://localhost:5173'
+  # Production settings
+  MAX_CONNECTIONS = '100'
+  POOL_SIZE = '20'
+  POOL_MAX_OVERFLOW = '30'
+  CACHE_ENABLED = 'true'
+  RATE_LIMIT = '100/minute'
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = false     # Keep all 3 VMs always running
+  auto_start_machines = true
+  min_machines_running = 3       # 3 VMs minimum (1000 user capacity)
+  processes = ['app']
+
+  [[http_service.checks]]
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  size = 'shared-cpu-1x'        # 1 shared CPU, 256MB RAM
+  memory = '256mb'
+  count = 3                      # 3 instances for load distribution
+
+# --- Worker processes (background jobs) ---
+[processes]
+  app = 'uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 --loop uvloop'
+  worker = 'celery -A core.celery worker --loglevel=info --concurrency=2'
+
+# --- Worker VM (separate from API VMs) ---
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '256mb'
+  processes = ['worker']
