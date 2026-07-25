@@ -26,8 +26,8 @@ Throttle is an AI cost optimization platform that automatically detects waste in
 ## Getting Started
 
 ```bash
-git clone https://github.com/lindokuhlesithole/linsiq-AI-Cost-Optimisation-App.git
-cd linsiq-AI-Cost-Optimisation-App
+git clone https://github.com/lindokuhlesithole/throttle-AI-Cost-Optimisation-App.git
+cd throttle-AI-Cost-Optimisation-App
 npm install
 npm run dev
 ```
