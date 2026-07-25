@@ -61,9 +61,9 @@ export const Route = createFileRoute("/_authenticated/optimizations")({
   search: { middlewares: [stripSearchParams(searchDefaults)] },
   head: () => ({
     meta: [
-      { title: "Optimizations · Linsiq" },
+      { title: "Optimizations · Throttle" },
       { name: "description", content: "Review and apply AI cost optimization recommendations across your AWS account." },
-      { property: "og:title", content: "Optimizations · Linsiq" },
+      { property: "og:title", content: "Optimizations · Throttle" },
       { property: "og:description", content: "Review and apply AI cost optimization recommendations." },
     ],
   }),
