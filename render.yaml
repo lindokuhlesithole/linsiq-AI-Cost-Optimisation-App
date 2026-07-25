@@ -1,15 +1,4 @@
-# ============================================================
-# Linsiq — Render.com Blueprint (FREE TIER)
-# One-click deploy: https://render.com/blueprints
-# 
-# FREE TIER LIMITS:
-#   - Web Service: 512MB RAM, sleeps after 15min inactivity
-#   - PostgreSQL: 1GB storage, 90-day free trial
-#   - Upgrade: $7/month for always-on, $15/month for PostgreSQL
-# ============================================================
-
 services:
-  # --- Backend API ---
   - type: web
     name: linsiq-api
     runtime: docker
@@ -21,41 +10,20 @@ services:
         fromDatabase:
           name: linsiq-db
           property: connectionString
-      - key: REDIS_URL
-        value: "redis://localhost:6379/0"  # In-memory fallback for free tier
-      - key: CELERY_BROKER_URL
-        value: "redis://localhost:6379/0"
-      - key: CELERY_RESULT_BACKEND
-        value: "redis://localhost:6379/0"
       - key: SECRET_KEY
         generateValue: true
-      - key: AWS_ACCESS_KEY_ID
-        sync: false  # Set manually in Render dashboard
-      - key: AWS_SECRET_ACCESS_KEY
-        sync: false
       - key: AWS_DEFAULT_REGION
         value: us-east-1
-      - key: SUPABASE_URL
-        sync: false
-      - key: SUPABASE_ANON_KEY
-        sync: false
       - key: CORS_ORIGINS
-        value: "*"  # Lock down to your frontend URL in production
+        value: "*"
+      - key: REDIS_URL
+        value: "memory://"
+      - key: CELERY_BROKER_URL
+        value: "memory://"
+      - key: CELERY_RESULT_BACKEND
+        value: "memory://"
     healthCheckPath: /health
-
-  # --- Frontend (optional — can also use Vercel) ---
-  - type: web
-    name: linsiq-web
-    runtime: static
-    plan: free
-    rootDir: .
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
-    envVars:
-      - key: VITE_API_URL
-        value: "https://linsiq-api.onrender.com"  # Update after first deploy
 
 databases:
   - name: linsiq-db
     plan: free
-    ipAllowList: []  # Allow from anywhere (Render services only by default)
