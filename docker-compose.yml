@@ -1,67 +1,119 @@
+# ============================================================
+# Linsiq Platform — Docker Compose (Local / Free Tier)
+# 
+# ZERO CONFIG: Works out of the box with SQLite + in-memory Celery.
+# For full features, add AWS credentials and switch to PostgreSQL.
+#
+# Commands:
+#   docker-compose up -d          # Start all services
+#   docker-compose logs -f        # View logs
+#   docker-compose down           # Stop
+#   docker-compose down -v        # Stop + remove data
+# ============================================================
+
 version: "3.8"
 
 services:
+  # --- Backend API ---
   api:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+psycopg2://linsiq:linsiq@postgres:5432/linsiq
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./linsiq.db}
+      - REDIS_URL=${REDIS_URL:-memory://}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-memory://}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-memory://}
+      - SECRET_KEY=${SECRET_KEY:-local-dev-secret-change-me}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
       - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
-    depends_on:
-      - postgres
-      - redis
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - DEBUG=${DEBUG:-true}
     volumes:
       - ./backend:/app
+      - linsiq_data:/app/data
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
+  # --- Celery Worker (only starts if Redis is configured) ---
   worker:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=postgresql+psycopg2://linsiq:linsiq@postgres:5432/linsiq
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-    depends_on:
-      - postgres
-      - redis
-    command: celery -A core.celery worker --loglevel=info
-
-  scheduler:
-    build: ./backend
-    environment:
-      - DATABASE_URL=postgresql+psycopg2://linsiq:linsiq@postgres:5432/linsiq
-      - REDIS_URL=redis://redis:6379/0
-      - CELERY_BROKER_URL=redis://redis:6379/0
-    depends_on:
-      - postgres
-      - redis
-    command: celery -A core.celery beat --loglevel=info
-
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      - POSTGRES_USER=linsiq
-      - POSTGRES_PASSWORD=linsiq
-      - POSTGRES_DB=linsiq
-    ports:
-      - "5432:5432"
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./linsiq.db}
+      - REDIS_URL=${REDIS_URL:-memory://}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-memory://}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-memory://}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./backend:/app
+      - linsiq_data:/app/data
+    command: >
+      sh -c "if [ '$REDIS_URL' != 'memory://' ]; then
+        celery -A core.celery worker --loglevel=info;
+      else
+        echo 'Worker: Redis not configured, running in-memory mode';
+        tail -f /dev/null;
+      fi"
+    depends_on:
+      - api
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
+  # --- Celery Beat Scheduler (only with Redis) ---
+  scheduler:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./linsiq.db}
+      - REDIS_URL=${REDIS_URL:-memory://}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-memory://}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-memory://}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+    volumes:
+      - ./backend:/app
+      - linsiq_data:/app/data
+    command: >
+      sh -c "if [ '$REDIS_URL' != 'memory://' ]; then
+        celery -A core.celery beat --loglevel=info;
+      else
+        echo 'Scheduler: Redis not configured, skipping';
+        tail -f /dev/null;
+      fi"
+    depends_on:
+      - api
+
+  # --- PostgreSQL (optional — uncomment for full PostgreSQL) ---
+  # postgres:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     - POSTGRES_USER=linsiq
+  #     - POSTGRES_PASSWORD=linsiq
+  #     - POSTGRES_DB=linsiq
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+
+  # --- Redis (optional — uncomment for background workers) ---
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
 
 volumes:
-  postgres_data:
+  linsiq_data:
+  # postgres_data:
