@@ -3,8 +3,7 @@ services:
     name: linsiq-api
     runtime: docker
     plan: free
-    rootDir: backend
-    dockerfilePath: Dockerfile
+    dockerfilePath: backend/Dockerfile
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -17,11 +16,11 @@ services:
       - key: CORS_ORIGINS
         value: "*"
       - key: REDIS_URL
-        value: "memory://"
+        value: memory
       - key: CELERY_BROKER_URL
-        value: "memory://"
+        value: memory
       - key: CELERY_RESULT_BACKEND
-        value: "memory://"
+        value: memory
     healthCheckPath: /health
 
 databases:
