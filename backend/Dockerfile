@@ -9,8 +9,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app
 COPY . .
 
-# Expose port
-EXPOSE 8000
+# Expose port (Render sets $PORT env var)
+ENV PYTHONUNBUFFERED=1
 
-# Run with uvicorn
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Use $PORT env var (Render sets this), fallback to 8000 for local
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
