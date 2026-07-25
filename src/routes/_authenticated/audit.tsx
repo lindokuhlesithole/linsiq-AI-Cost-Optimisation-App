@@ -33,13 +33,13 @@ export const Route = createFileRoute("/_authenticated/audit")({
   search: { middlewares: [stripSearchParams({ opt: undefined })] },
   head: () => ({
     meta: [
-      { title: "Audit log · Linsiq" },
+      { title: "Audit log · Throttle" },
       {
         name: "description",
         content:
           "Timeline of every applied, dismissed, and reverted optimization with actor, savings, and timestamp.",
       },
-      { property: "og:title", content: "Audit log · Linsiq" },
+      { property: "og:title", content: "Audit log · Throttle" },
       {
         property: "og:description",
         content: "Timeline of every optimization change with actor and timestamp.",
