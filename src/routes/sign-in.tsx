@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,10 +12,10 @@ import { Loader2 } from "lucide-react";
 export const Route = createFileRoute("/sign-in")({
   head: () => ({
     meta: [
-      { title: "Sign in · Linsiq" },
-      { name: "description", content: "Sign in to Linsiq to manage your AI cost optimizations." },
-      { property: "og:title", content: "Sign in · Linsiq" },
-      { property: "og:description", content: "Sign in to Linsiq to manage your AI cost optimizations." },
+      { title: "Sign in · Throttle" },
+      { name: "description", content: "Sign in to Throttle to manage your AI cost optimizations." },
+      { property: "og:title", content: "Sign in · Throttle" },
+      { property: "og:description", content: "Sign in to Throttle to manage your AI cost optimizations." },
     ],
   }),
   component: AuthPage,
@@ -60,7 +59,7 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Account created", { description: "You're signed in." });
+        toast.success("Account created", { description: "You’re signed in." });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -75,10 +74,11 @@ function AuthPage() {
   async function handleGoogle() {
     setLoading(true);
     try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
       });
-      if (result.error) throw result.error;
+      if (error) throw error;
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Google sign-in failed");
       setLoading(false);
@@ -148,7 +148,7 @@ function AuthPage() {
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" />
+              <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="•••••••" />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
