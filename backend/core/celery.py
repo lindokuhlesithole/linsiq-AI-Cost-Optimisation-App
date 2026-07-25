@@ -1,28 +1,37 @@
-"""Celery configuration for background tasks."""
+"""
+Linsiq Celery Configuration
+Works with Redis (production) or in-memory (free tier / local dev).
+"""
+import os
 from celery import Celery
-from core.config import settings
 
-celery_app = Celery(
-    "linsiq",
-    broker=settings.CELERY_BROKER_URL,
-    backend=settings.CELERY_RESULT_BACKEND,
-    include=["core.tasks"],
-)
+broker_url = os.getenv("CELERY_BROKER_URL", "memory://")
+result_backend = os.getenv("CELERY_RESULT_BACKEND", "memory://")
 
-celery_app.conf.update(
+# Use in-memory broker for free tier (no Redis required)
+if broker_url == "memory://":
+    app = Celery(
+        "linsiq",
+        broker="memory://",
+        backend="cache+memory://",
+        task_always_eager=True,  # Run tasks synchronously in-process
+    )
+else:
+    app = Celery(
+        "linsiq",
+        broker=broker_url,
+        backend=result_backend,
+    )
+
+app.conf.update(
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",
     timezone="UTC",
     enable_utc=True,
-    beat_schedule={
-        "waste-scan-every-6h": {
-            "task": "core.tasks.run_waste_scan",
-            "schedule": 21600.0,  # 6 hours
-        },
-        "cost-snapshot-daily": {
-            "task": "core.tasks.take_cost_snapshot",
-            "schedule": 86400.0,  # 24 hours
-        },
-    },
+    result_expires=3600,
+    broker_connection_retry_on_startup=True,
 )
+
+# Import tasks so Celery can discover them
+app.autodiscover_tasks(["core"])
