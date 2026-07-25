@@ -32,9 +32,9 @@ import { fetchExportRows, type OptimizationExportRow } from "@/lib/optimizations
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
-      { title: "Dashboard · Linsiq" },
+      { title: "Dashboard · Throttle" },
       { name: "description", content: "Overview of AI spend, optimizations, and daily cost trends across SageMaker, Bedrock, and EC2 GPU." },
-      { property: "og:title", content: "Dashboard · Linsiq" },
+      { property: "og:title", content: "Dashboard · Throttle" },
       { property: "og:description", content: "Overview of AI spend, optimizations, and daily cost trends." },
     ],
   }),
@@ -123,7 +123,7 @@ function buildReportCsv(rows: OptimizationExportRow[], range?: DateRange) {
 
   const now = new Date();
   const lines: string[] = [];
-  lines.push(`Linsiq cost optimization report`);
+  lines.push(`Throttle cost optimization report`);
   lines.push(`Generated,${now.toISOString()}`);
   lines.push(`Date range,${rangeLabel}`);
   lines.push("");
@@ -209,7 +209,7 @@ async function downloadReport(range?: DateRange) {
   const stamp = new Date().toISOString().slice(0, 10);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `linsiq-report-${stamp}.csv`;
+  a.download = `throttle-report-${stamp}.csv`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -261,7 +261,7 @@ async function downloadPdfReport(range?: DateRange) {
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(20);
-  doc.text("Linsiq", marginX, 34);
+  doc.text("Throttle", marginX, 34);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
   doc.text("Cost optimization report", marginX, 54);
@@ -406,7 +406,7 @@ async function downloadPdfReport(range?: DateRange) {
     doc.setFontSize(8);
     doc.setTextColor(148, 163, 184);
     doc.text(
-      `Linsiq · Confidential`,
+      `Throttle · Confidential`,
       marginX,
       doc.internal.pageSize.getHeight() - 20,
     );
@@ -419,7 +419,7 @@ async function downloadPdfReport(range?: DateRange) {
   }
 
   const stamp = new Date().toISOString().slice(0, 10);
-  doc.save(`linsiq-report-${stamp}.pdf`);
+  doc.save(`throttle-report-${stamp}.pdf`);
   toast.success("PDF exported", {
     description: `${opts.length} optimizations · ${spend.length} days of spend`,
   });
